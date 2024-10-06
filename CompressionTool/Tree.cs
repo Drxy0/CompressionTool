@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,11 +29,11 @@ namespace CompressionTool
         public IHuffmanBaseNode Left { get; set; }
         public IHuffmanBaseNode Right { get; set; }
 
-        public HuffmanInternalNode(int weight, IHuffmanBaseNode left, IHuffmanBaseNode right)
+        public HuffmanInternalNode(IHuffmanBaseNode left, IHuffmanBaseNode right, int weight)
         {
-            Weight = weight;
             Left = left;
             Right = right;
+            Weight = weight;
         }
 
         public bool IsLeaf
@@ -50,11 +51,10 @@ namespace CompressionTool
         {
             Root = new HuffmanLeafNode(_value, weight);
         }
-        public HuffmanTree(int weight, IHuffmanBaseNode left, IHuffmanBaseNode right)
+        public HuffmanTree(IHuffmanBaseNode left, IHuffmanBaseNode right, int weight)
         {
-            Root = new HuffmanInternalNode(weight, left, right);
+            Root = new HuffmanInternalNode(left, right, weight);
         }
-
         int CompareTo(HuffmanTree t)
         {
             HuffmanTree that = (HuffmanTree) t;
@@ -73,19 +73,42 @@ namespace CompressionTool
             }
         }
 
-    }
 
-
-    static HuffmanTree BuildTree(Stack<KeyValuePair<char, int>> nodesStack)
-    {
-
-        while (nodesStack.Count > 1)
+        public override string ToString()
         {
-            KeyValuePair<char, int> tmp1 = nodesStack.Pop();
-            KeyValuePair<char, int> tmp2 = nodesStack.Pop();
-            
-            
-        
+            return Root.Weight.ToString();
         }
     }
+
+    public static class HuffmanAlgorithm
+    {
+        public static Stack<HuffmanTree> InitHuffmanTrees(List<KeyValuePair<char, int>> nodesList)
+        {
+            Stack<HuffmanTree> nodesStack = new Stack<HuffmanTree>();
+            for (int i = 0; i < nodesList.Count; i++)
+            {
+                HuffmanTree leaf = new HuffmanTree(nodesList[i].Key, nodesList[i].Value);
+                nodesStack.Push(leaf);
+            }
+
+            return nodesStack;
+        }
+
+        public static HuffmanTree BuildTree(Stack<HuffmanTree> nodesStack)
+        {
+            HuffmanTree tmp1, tmp2, tmp3 = null;
+
+            while (nodesStack.Count > 1)
+            {
+                tmp1 = nodesStack.Pop();
+                tmp2 = nodesStack.Pop();
+                tmp3 = new HuffmanTree(tmp1.Root, tmp2.Root,
+                                         tmp1.Root.Weight + tmp2.Root.Weight);
+                nodesStack.Push(tmp3);
+            }
+            return tmp3;
+        }
+    }
+
+
 }

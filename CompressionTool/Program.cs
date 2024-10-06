@@ -52,12 +52,11 @@ namespace CompressionTool
             }
             nodesList.Sort((kvp1, kvp2) => kvp1.Value.CompareTo(kvp2.Value));
 
-            Stack<KeyValuePair<char, int>> nodesStack = new Stack<KeyValuePair<char, int>>();
+            Stack<HuffmanTree> nodesStack = HuffmanAlgorithm.InitHuffmanTrees(nodesList);
+            HuffmanTree tree = HuffmanAlgorithm.BuildTree(nodesStack);
 
-            foreach(var node in nodesList)
-            {
-                nodesStack.Push(node);
-            }
+            Console.WriteLine(tree);
+            Console.Read();
 
         }
     }
