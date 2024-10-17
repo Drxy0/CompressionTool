@@ -14,6 +14,7 @@ namespace CompressionTool
             Console.WriteLine("Input name of file");
             fileName = Console.ReadLine();
             fileName = $"{baseDir}/{fileName}";
+            string fileNameToWrite = $"{baseDir}/marko.txt";
 
             if (File.Exists(fileName))
             {
@@ -51,12 +52,15 @@ namespace CompressionTool
                 nodesList.Add(kvp);
             }
             nodesList.Sort((kvp1, kvp2) => kvp1.Value.CompareTo(kvp2.Value));
-
-            Stack<HuffmanTree> nodesStack = HuffmanAlgorithm.InitHuffmanTrees(nodesList);
-            HuffmanTree tree = HuffmanAlgorithm.BuildTree(nodesStack);
-
-            Console.WriteLine(tree);
+            
+            Writer.WriteHeader(fileNameToWrite, nodesList);
             Console.Read();
+            //Stack<HuffmanTree> nodesStack = HuffmanAlgorithm.InitHuffmanTrees(nodesList);
+            //HuffmanTree tree = HuffmanAlgorithm.BuildTree(nodesStack);
+
+            //Console.WriteLine(tree);
+
+
 
         }
     }
