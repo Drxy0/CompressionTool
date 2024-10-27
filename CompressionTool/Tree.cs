@@ -85,7 +85,7 @@ namespace CompressionTool
         public static Stack<HuffmanTree> InitHuffmanTrees(List<KeyValuePair<char, int>> nodesList)
         {
             Stack<HuffmanTree> nodesStack = new Stack<HuffmanTree>();
-            for (int i = 0; i < nodesList.Count; i++)
+            for (int i = nodesList.Count - 1; i >= 0; i--)
             {
                 HuffmanTree leaf = new HuffmanTree(nodesList[i].Key, nodesList[i].Value);
                 nodesStack.Push(leaf);
@@ -105,8 +105,40 @@ namespace CompressionTool
                 tmp3 = new HuffmanTree(tmp1.Root, tmp2.Root,
                                          tmp1.Root.Weight + tmp2.Root.Weight);
                 nodesStack.Push(tmp3);
+                SortStack(nodesStack);
+
             }
             return tmp3;
+        }
+
+        public static void SortStack(Stack<HuffmanTree> nodesStack)
+        {
+            List<HuffmanTree> list = nodesStack.ToList();
+            for (int i = 0; i <  list.Count - 1; i++)
+            {
+                if (list[i].Root.Weight > list[i+1].Root.Weight)
+                {
+                    var temp = list[i];
+                    list[i] = list[i+1];
+                    list[i+1] = temp;
+                }
+                else
+                {
+                    nodesStack.Clear();
+                    list.Sort((a, b) => b.Root.Weight.CompareTo(a.Root.Weight));
+                    foreach (var item in list)
+                    {
+                        nodesStack.Push(item);
+                    }
+                    return;
+                }
+            }
+        }
+
+        public static void BuildPrefixCodeTable(HuffmanTree tree)
+        {
+            Console.WriteLine(tree);
+
         }
     }
 

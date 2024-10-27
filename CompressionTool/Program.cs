@@ -54,13 +54,10 @@ namespace CompressionTool
             nodesList.Sort((kvp1, kvp2) => kvp1.Value.CompareTo(kvp2.Value));
             
             Writer.WriteHeader(fileNameToWrite, nodesList);
-            Console.Read();
-            //Stack<HuffmanTree> nodesStack = HuffmanAlgorithm.InitHuffmanTrees(nodesList);
-            //HuffmanTree tree = HuffmanAlgorithm.BuildTree(nodesStack);
-
-            //Console.WriteLine(tree);
-
-
+            Stack<HuffmanTree> nodesStack = HuffmanAlgorithm.InitHuffmanTrees(nodesList);
+            HuffmanTree tree = HuffmanAlgorithm.BuildTree(nodesStack);
+            
+            HuffmanAlgorithm.BuildPrefixCodeTable(tree);
 
         }
     }
