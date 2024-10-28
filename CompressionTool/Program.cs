@@ -57,7 +57,8 @@ namespace CompressionTool
             Stack<HuffmanTree> nodesStack = HuffmanAlgorithm.InitHuffmanTrees(nodesList);
             HuffmanTree tree = HuffmanAlgorithm.BuildTree(nodesStack);
             
-            HuffmanAlgorithm.BuildPrefixCodeTable(tree);
+            Dictionary<char, string> dik = HuffmanAlgorithm.GeneratePrefixCodeTable(tree);
+            HuffmanAlgorithm.PrintPrefixCodeTable(dik);
 
         }
     }

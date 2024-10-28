@@ -55,24 +55,10 @@ namespace CompressionTool
         {
             Root = new HuffmanInternalNode(left, right, weight);
         }
-        int CompareTo(HuffmanTree t)
+        public int CompareTo(HuffmanTree other)
         {
-            HuffmanTree that = (HuffmanTree) t;
-
-            if (Root.Weight < that.Root.Weight)
-            {
-                return -1;
-            }
-            else if (Root.Weight > that.Root.Weight)
-            {
-                return 1;
-            }
-            else
-            {
-                return 0;
-            }
+            return Root.Weight.CompareTo(other.Root.Weight);
         }
-
 
         public override string ToString()
         {
@@ -96,19 +82,21 @@ namespace CompressionTool
 
         public static HuffmanTree BuildTree(Stack<HuffmanTree> nodesStack)
         {
-            HuffmanTree tmp1, tmp2, tmp3 = null;
-
             while (nodesStack.Count > 1)
             {
-                tmp1 = nodesStack.Pop();
-                tmp2 = nodesStack.Pop();
-                tmp3 = new HuffmanTree(tmp1.Root, tmp2.Root,
-                                         tmp1.Root.Weight + tmp2.Root.Weight);
-                nodesStack.Push(tmp3);
-                SortStack(nodesStack);
-
+                // Pop the two trees with lowest weight
+                HuffmanTree left = nodesStack.Pop();
+                HuffmanTree right = nodesStack.Pop();
+                // Combine them into a new internal node
+                HuffmanTree parent = new HuffmanTree(left.Root, right.Root, left.Root.Weight + right.Root.Weight);
+                // Push the new tree back to the stack
+                nodesStack.Push(parent);
+                // Sort stack so the smallest weights are on top
+                nodesStack = new Stack<HuffmanTree>(nodesStack.OrderByDescending(tree => tree.Root.Weight));
             }
-            return tmp3;
+
+            // The last remaining tree in the stack is the root Huffman tree
+            return nodesStack.Pop();
         }
 
         public static void SortStack(Stack<HuffmanTree> nodesStack)
@@ -135,12 +123,36 @@ namespace CompressionTool
             }
         }
 
-        public static void BuildPrefixCodeTable(HuffmanTree tree)
+        public static Dictionary<char, string> GeneratePrefixCodeTable(HuffmanTree tree)
         {
-            Console.WriteLine(tree);
+            Dictionary<char, string> prefixCodeTable = new Dictionary<char, string>();
+            GenerateCodesRecursive(tree.Root, "", prefixCodeTable);
+            return prefixCodeTable;
+        }
 
+        private static void GenerateCodesRecursive(IHuffmanBaseNode node, string code, Dictionary<char, string> prefixCodeTable)
+        {
+            if (node == null) return;
+
+            if (node.IsLeaf && node is HuffmanLeafNode leaf)
+            {
+                // Add leaf character and its code to the dictionary
+                prefixCodeTable[leaf.Value] = code;
+            }
+            else if (node is HuffmanInternalNode internalNode)
+            {
+                // Traverse left (add '0' to code)
+                GenerateCodesRecursive(internalNode.Left, code + "0", prefixCodeTable);
+                // Traverse right (add '1' to code)
+                GenerateCodesRecursive(internalNode.Right, code + "1", prefixCodeTable);
+            }
+        }
+        public static void PrintPrefixCodeTable(Dictionary<char, string> prefixCodeTable)
+        {
+            foreach (var entry in prefixCodeTable)
+            {
+                Console.WriteLine($"Character: {entry.Key}, Code: {entry.Value}");
+            }
         }
     }
-
-
 }
